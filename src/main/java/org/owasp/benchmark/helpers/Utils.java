@@ -16,7 +16,7 @@
  * @created 2015
  */
 package org.owasp.benchmark.helpers;
-
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -424,9 +424,9 @@ public class Utils {
         SSLContext sslcontext =
                 SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
         // Allow TLSv1 protocol only
-        SSLConnectionSocketFactory sslsf =
-                new SSLConnectionSocketFactory(
-                        sslcontext, new String[] {"TLSv1"}, null, NoopHostnameVerifier.INSTANCE);
+SSLConnectionSocketFactory sslsf =
+    new SSLConnectionSocketFactory(
+        sslcontext, new String[] {"TLSv1"}, null, new DefaultHostnameVerifier());
         return sslsf;
     }
 
