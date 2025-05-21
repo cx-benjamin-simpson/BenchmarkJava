@@ -420,15 +420,21 @@ public class Utils {
         return cipher;
     }
 
-    public static SSLConnectionSocketFactory getSSLFactory() throws Exception {
-        SSLContext sslcontext =
-                SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
-        // Allow TLSv1 protocol only
-SSLConnectionSocketFactory sslsf =
-    new SSLConnectionSocketFactory(
-        sslcontext, new String[] {"TLSv1"}, null, new DefaultHostnameVerifier());
-        return sslsf;
+   public static SSLConnectionSocketFactory getSSLFactory() throws Exception {
+    // Load your truststore (e.g., JKS or PKCS12)
+    KeyStore trustStore = KeyStore.getInstance("JKS");
+    try (FileInputStream trustStream = new FileInputStream("trusted-certs.jks")) {
+        trustStore.load(trustStream, "changeit".toCharArray()); // Password for the truststore
     }
+
+    // Initialize SSLContext with the truststore
+    SSLContext sslContext = SSLContexts.custom()
+            .loadTrustMaterial(trustStore, null) // Use default TrustStrategy
+            .build();
+
+    return new SSLConnectionSocketFactory(sslContext);
+}
+
 
     /**
      * This method returns information about which library the supplied class came from. This is
